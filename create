@@ -48,7 +48,7 @@ fi
 
 #Asking user if they want to edit the file
 if [[ -e "$_FILENAME" ]]; then #Checking if the file exists using the -e flag, which returns true if the file exists
-    read -p "Do you want to edit $_FILENAME? (y/n) " _response #Asking user for input and storing it in the variable _response
+    read -p "Do you want to edit $_FILENAME? (y/n) " _response #Asking user for input and storing it in the variable _response.
 
     sleep 1
     _response="${_response,,}"  # Convert to lowercase for case-insensitive comparison
