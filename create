@@ -1,0 +1,58 @@
+#!/bin/bash
+#writing a bash script file making command, making it executable, and adding the #!/bin/bash' inside
+
+: 'This script creates a file with the name provided as an argument,
+checks if the file extension is 'sh', makes it executable,
+and adds a shebang line along with some comments.
+It also prompts the user to edit the file after creation.'
+_FILENAME="$1" #This assigns the first argument passed to the script to the variable _FILENAME, quoted for safety.
+sleep 1
+
+# Check if file already exists
+if [[ -e "$_FILENAME" ]]; then
+    # Check if file is not empty (has content)
+    if [[ -s "$_FILENAME" ]]; then
+        echo "File already exists and is not empty. Aborting..."
+        sleep 1
+        exit 1
+    else
+        echo "File exists but is empty. Overwriting..."
+        sleep 1
+    fi
+else
+    echo "Creating $_FILENAME..."
+fi
+
+touch $_FILENAME
+sleep 2
+
+: 'Extract the file extension from the filename using parameter expansion. 
+The syntax ${variable##*.} removes the longest match of any characters followed 
+by a dot from the beginning of the variable, leaving only the extension.'
+_Extension="${_FILENAME##*.}"
+
+#Checking if the file extension is 'sh' and if it is, making the file executable and writing the #!/bin/bash line inside the file
+if [[ "$_Extension" == "sh" ]]; then
+    #Making the file executable for the user only using the chmod command with the u+x option
+    echo "Making $_FILENAME Executable..." 
+    chmod u+x $_FILENAME
+    sleep 2
+
+    : 'This writes the text to the named file _FILNAME in new lines
+    and the -e flag enables interpretation of backslash escapes, allowing for newlines to be added with \n'
+    echo -e "#!/bin/bash\n#This is a shell script commment.\n#Make sure you write your own comments below!" > $_FILENAME 
+else
+    echo "File has another unique extension!" 
+    sleep 1
+fi
+
+#Asking user if they want to edit the file
+if [[ -e "$_FILENAME" ]]; then #Checking if the file exists using the -e flag, which returns true if the file exists
+    read -p "Do you want to edit $_FILENAME? (y/n) " _response #Asking user for input and storing it in the variable _response
+
+    sleep 1
+    _response="${_response,,}"  # Convert to lowercase for case-insensitive comparison
+    if [[ "$_response" =~ ^(y|yes)$ ]]; then #uses regex pattern to check if the response is 'y' or 'yes'
+        code "/home/mbefa/$_FILENAME" #Opens the file in VSCode using the code command, with the full path to the file
+    fi
+fi
